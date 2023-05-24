@@ -56,13 +56,13 @@ async def root():
 
 @app.get("/health")
 async def root1():
-    return "Server is up!"    
+    return "Server is up!"
 
 
 model = load_model('new_keras_model.h5',compile=False)
 
 
-def predict(image: Image.Image):
+def predict1(image: Image.Image):
     #newlabels = ['Bathroom','Room-bedroom','Living_Room','Outdoor_building','Kitchen','Non_Related','Garden','Plot','Empty_room']
     labels = ['Bathroom','Bedroom','Living Room','Exterior View','Kitchen','Garden','Plot','Room','Swimming Pool','Gym','Parking','Map Location','Balcony','Floor Plan','Furnishing','Building Lobby','Office area','Stair','Master plan']
 
@@ -194,13 +194,30 @@ async def predict_image(image_url: str):
     return function
 
 
+@app.post("/upload")
+async def upload_file(file: UploadFile=File(...)):
+    '''This function is upload image from your system'''
+    try:
+       contents = await file.read()
+       image_bytes = Image.open(BytesIO(contents))
+    
+    except:
+      return("image not readable")
+    
+    
+    function = predict1(image_bytes)
+    # data = json.dumps(prediction1)
+    # data1 = json.loads(data.replace("\'", '"'))
+    return function
+
+
 def predict_image1(str_url: str):
     response = requests.get(str_url)
-    print(response)
+    # print(response)
     image_bytes = io.BytesIO(response.content)
-    print(image_bytes)
-    img = PIL.Image.open(image_bytes)
-    prediction1 = predict(img)
+    # print(image_bytes)
+    img = Image.open(image_bytes)
+    prediction1 = predict1(img)
     data = json.dumps(prediction1)
     data1 = json.loads(data.replace("\'", '"'))
     return data1
