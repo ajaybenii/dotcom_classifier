@@ -1,25 +1,21 @@
 #usr/bin/python
+import io
+import uvicorn
+import json
+import requests
+
+import tensorflow as tf
+import numpy as np
 
 from io import BytesIO
-import json
-import numpy as np
-import uvicorn
 from PIL import Image, ImageOps
-import io
-import tensorflow as tf
 from keras.models import load_model
-import PIL
-import urllib.request
-from fastapi import FastAPI, Request
-from fastapi import UploadFile,File, HTTPException, Depends
-
-from typing import Optional
-from pydantic import BaseModel
-import requests
-import base64
+from fastapi import FastAPI, UploadFile,File
 from fastapi.middleware.cors import CORSMiddleware
 
+
 app = FastAPI()
+
 
 origins = [
     "https://ai.propvr.tech",
@@ -59,13 +55,12 @@ async def root1():
     return "Server is up!"
 
 
-model = load_model('new_keras_model.h5',compile=False)
+model = load_model('update_keras_model.h5',compile=False)
 
 
 def predict1(image: Image.Image):
-    #newlabels = ['Bathroom','Room-bedroom','Living_Room','Outdoor_building','Kitchen','Non_Related','Garden','Plot','Empty_room']
-    labels = ['Bathroom','Bedroom','Living Room','Exterior View','Kitchen','Garden','Plot','Room','Swimming Pool','Gym','Parking','Map Location','Balcony','Floor Plan','Furnishing','Building Lobby','Office area','Stair','Master plan']
 
+    labels = ['Bathroom','Bedroom','Living Room','Exterior View','Kitchen','Garden','Plot','Room','Swimming Pool','Gym','Parking','Map Location','Balcony','Floor Plan','Furnished Amenities','Building Lobby','Team Area','Staircase','Master Plan']
     data = np.ndarray(shape=(1,224, 224, 3), dtype=np.float32)
     size = (224, 224)
 
@@ -131,60 +126,6 @@ def predict1(image: Image.Image):
         }
     }
 
-    
-
-    '''
-    prediction_dict = {
-        "response": {
-            "solutions": {
-                "re_roomtype_eu_v2": {
-                    "predictions": [
-                        {
-                            "confidence": str(result[0][0]),
-                            "label": str(labels[0])
-                        },
-                        {
-                            "confidence": str(result[0][1]),
-                            "label": str(labels[1])
-                        },
-                        {
-                            "confidence": str(result[0][2]),
-                            "label": str(labels[2])
-                        },
-                        {
-                            "confidence": str(result[0][3]),
-                            "label": str(labels[3])
-                        },
-                        {
-                            "confidence": str(result[0][4]),
-                            "label": str(labels[4])
-                        },
-                        {
-                            "confidence": str(result[0][5]),
-                            "label": str(labels[5])
-                        },
-                        {
-                            "confidence": str(result[0][6]),
-                            "label": str(labels[6])
-                        },
-                        {
-                            "confidence": str(result[0][7]),
-                            "label": str(labels[7])
-                        },
-                        {
-                            "confidence": str(result[0][8]),
-                            "label": str(labels[8])
-                        }    
-                    ],
-                    "top_prediction":{
-                        "confidence": str(result[0][index_max]),
-                            "label": str(labels[index_max])
-                    }
-                }
-            }
-        }
-    }
-    '''
     return prediction_dict
 
 
@@ -206,16 +147,14 @@ async def upload_file(file: UploadFile=File(...)):
     
     
     function = predict1(image_bytes)
-    # data = json.dumps(prediction1)
-    # data1 = json.loads(data.replace("\'", '"'))
     return function
 
 
 def predict_image1(str_url: str):
     response = requests.get(str_url)
-    # print(response)
+
     image_bytes = io.BytesIO(response.content)
-    # print(image_bytes)
+
     img = Image.open(image_bytes)
     prediction1 = predict1(img)
     data = json.dumps(prediction1)
@@ -223,5 +162,5 @@ def predict_image1(str_url: str):
     return data1
 
 
-if __name__ == "__main__":
-    uvicorn.run(app, host="0.0.0.0", port=8000)
+# if __name__ == "__main__":
+#     uvicorn.run(app, host="0.0.0.0", port=8000)
