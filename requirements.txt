@@ -3,4 +3,5 @@ uvicorn
 keras
 pillow
 requests
-tensorflow
+# tensorflow
+tensorflow-cpu
