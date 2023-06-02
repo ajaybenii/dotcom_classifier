@@ -1,14 +1,8 @@
-# nsfw_detector
-# protobuf==3.20.3
-# uvicorn
-# fastapi
-# torch
-# transformers
-# python-multipart
-
 fastapi
 uvicorn
 keras
 numpy
 pillow
 requests
+tensorflow
+python-multipart

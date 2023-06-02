@@ -135,19 +135,19 @@ async def predict_image(image_url: str):
     return function
 
 
-@app.post("/upload")
-async def upload_file(file: UploadFile=File(...)):
-    '''This function is upload image from your system'''
-    try:
-       contents = await file.read()
-       image_bytes = Image.open(BytesIO(contents))
+# @app.post("/upload")
+# async def upload_file(file: UploadFile=File(...)):
+#     '''This function is upload image from your system'''
+#     try:
+#        contents = await file.read()
+#        image_bytes = Image.open(BytesIO(contents))
     
-    except:
-      return("image not readable")
+#     except:
+#       return("image not readable")
     
     
-    function = predict1(image_bytes)
-    return function
+#     function = predict1(image_bytes)
+#     return function
 
 
 def predict_image1(str_url: str):
