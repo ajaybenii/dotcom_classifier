@@ -1,8 +1,6 @@
 fastapi
 uvicorn
 keras
-numpy
 pillow
 requests
 tensorflow
-python-multipart
